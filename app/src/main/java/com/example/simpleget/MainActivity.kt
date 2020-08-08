@@ -24,18 +24,61 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //Retrofit instance
+//        callPosts()
+        callPostByID(5)
+
+
+
+
+    }
+
+    private fun callPostByID(id: Int) {
+//Retrofit instance
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl("https://jsonplaceholder.typicode.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         // Creating interface method
         val iCodingFlowApi: JsonParseInterface =retrofit.create(com.example.simpleget.JsonParseInterface::class.java)
-         //call the interface method
+        //call the interface method
+        val call:Call<UserModel> =iCodingFlowApi.getPosts(5)
+        call.enqueue(object :Callback<UserModel>{
+            override fun onFailure(call: Call<UserModel>?, t: Throwable?) {
+            }
+
+            override fun onResponse(call: Call<UserModel>?, response: Response<UserModel>?) {
+                Log.i(
+                    "Response",
+                    GsonBuilder().setPrettyPrinting().create().toJson(response)
+                )
+
+                if (response != null) {
+                    if(!response.isSuccessful()) {
+                        val textView = findViewById(R.id.text_view_result) as TextView
+                    }
+                }
+            }
+
+
+        })
+
+    }
+
+    private fun callPosts() {
+//Retrofit instance
+        val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl("https://jsonplaceholder.typicode.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        // Creating interface method
+        val iCodingFlowApi: JsonParseInterface =retrofit.create(com.example.simpleget.JsonParseInterface::class.java)
+        //call the interface method
         val call:Call<List<UserModel>> =iCodingFlowApi.getPosts()
         call.enqueue(object :Callback<List<UserModel>>{
             override fun onFailure(call: Call<List<UserModel>>?, t: Throwable?) {
-
+                Log.i(
+                    "Response",
+                    "response")
             }
 
             override fun onResponse(
@@ -49,45 +92,14 @@ class MainActivity : AppCompatActivity() {
 
                 if (response != null) {
                     if(!response.isSuccessful()) {
-                        val textView = findViewById(R.id.text_view_result) as TextView                    }
+                        val textView = findViewById(R.id.text_view_result) as TextView
+                    }
                 }
 
-                    /* if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
-                    return;
-                }
-                List<Post> posts = response.body();
-                for (Post post : posts) {
-                    String content = "";
-                    content += "ID: " + post.getId() + "\n";
-                    content += "User ID: " + post.getUserId() + "\n";
-                    content += "Title: " + post.getTitle() + "\n";
-                    content += "Text: " + post.getText() + "\n\n";
-                    textViewResult.append(content);
-                }
-            }*/
             }
 
 
         })
-
-//        call.enqueue(object :Callback<List<UserModel>>
-
-
-
-
-//        //Retrofit instance
-//        val retrofit: Retrofit = Retrofit.Builder()
-//            .baseUrl("https://simplifiedcoding.net/demos/")
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//        // creating APi instance
-//        val iMarvelApi: iUserModel =
-//            retrofit.create(com.example.myapplication.iUserModel::class.java)
-//        //Call the interfac method
-//        val call: Call<List<UserModel>> = iMarvelApi.getUsers()
-//
-//        call.enqueue(object :Callback<List<UserModel>>{
 
     }
 }
